@@ -7,7 +7,7 @@
       ansible.builtin.package:
         name: ['docker.io', 'docker-compose']
         state: present
-        
+
     - name: Pull WordPress and MySQL Docker images
       ansible.builtin.command: docker pull "{{ item }}"
       with_items:
@@ -35,7 +35,7 @@
         -v /var/lib/mysql_data:/var/lib/mysql
         mysql:5.7
       restart_policy: always
-
+      
     - name: Create a directory for persistent WordPress data
       ansible.builtin.file:
         path: /var/www/html_data
