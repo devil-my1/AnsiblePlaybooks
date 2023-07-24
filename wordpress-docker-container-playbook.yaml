@@ -1,5 +1,5 @@
 ---
-- name Deploy WordPress in Docker
+- name: Deploy WordPress in Docker
   hosts: all
   become: yes
   tasks:
