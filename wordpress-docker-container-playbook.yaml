@@ -1,39 +1,57 @@
-- hosts: all
+---
+- name Deploy WordPress in Docker
+  hosts: all
   become: yes
   tasks:
+    - name: Ensure Docker and Docker Compose are installed
+      ansible.builtin.package:
+        name: ['docker.io', 'docker-compose']
+        state: present
+        
+    - name: Pull WordPress and MySQL Docker images
+      ansible.builtin.command: docker pull "{{ item }}"
+      with_items:
+        - wordpress:latest
+        - mysql:5.7
 
-    - name: Create Network
-      community.docker.docker_network:
-        name: wordpress
+    - name: Create a Docker network
+      ansible.builtin.command: docker network create wordpress_network
 
-    - name: Deploy Wordpress
-      community.docker.docker_container:
-        name: wordpress
-        image: wordpress:latest
-        ports:
-          - "80:80"
-        networks:
-          - name: wordpress
-        volumes:
-          - wordpress:/var/www/html
-        env:
-          WORDPRESS_DB_HOST: "db"
-          WORDPRESS_DB_USER: "exampleuser"
-          WORDPRESS_DB_PASSWORD: "examplepass"
-          WORDPRESS_DB_NAME: "exampledb"
-        restart_policy: always
+    - name: Create a directory for persistent MySQL data
+      ansible.builtin.file:
+        path: /var/lib/mysql_data
+        state: directory
 
-    - name: Deploy MYSQL
-      community.docker.docker_container:
-        name: db
-        image: mysql:5.7
-        networks:
-          - name: wordpress
-        volumes:
-          - db:/var/lib/mysql
-        env:
-          MYSQL_DATABASE: "exampledb"
-          MYSQL_USER: "exampleuser"
-          MYSQL_PASSWORD: "examplepass"
-          MYSQL_RANDOM_ROOT_PASSWORD: '1'
-        restart_policy: always
+    - name: Launch MySQL container
+      ansible.builtin.command: >
+        docker run
+        -d
+        --name mysql_db
+        --network wordpress_network
+        -e MYSQL_ROOT_PASSWORD=your_mysql_root_password
+        -e MYSQL_DATABASE=wordpress_db
+        -e MYSQL_USER=wordpress_user
+        -e MYSQL_PASSWORD=your_wordpress_user_password
+        -v /var/lib/mysql_data:/var/lib/mysql
+        mysql:5.7
+      restart_policy: always
+
+    - name: Create a directory for persistent WordPress data
+      ansible.builtin.file:
+        path: /var/www/html_data
+        state: directory
+
+    - name: Launch WordPress container
+      ansible.builtin.command: >
+        docker run
+        -d
+        --name wordpress_app
+        --network wordpress_network
+        -e WORDPRESS_DB_HOST=mysql_db
+        -e WORDPRESS_DB_NAME=wordpress_db
+        -e WORDPRESS_DB_USER=wordpress_user
+        -e WORDPRESS_DB_PASSWORD=your_wordpress_user_password
+        -v /var/www/html_data:/var/www/html
+        -p 80:80
+        wordpress:latest
+      restart_policy: always
