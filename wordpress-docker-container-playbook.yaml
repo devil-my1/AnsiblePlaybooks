@@ -34,7 +34,7 @@
         -e MYSQL_PASSWORD=your_wordpress_user_password
         -v /var/lib/mysql_data:/var/lib/mysql
         mysql:5.7
-      restart_policy: always
+      
       
     - name: Create a directory for persistent WordPress data
       ansible.builtin.file:
@@ -54,4 +54,3 @@
         -v /var/www/html_data:/var/www/html
         -p 80:80
         wordpress:latest
-      restart_policy: always
