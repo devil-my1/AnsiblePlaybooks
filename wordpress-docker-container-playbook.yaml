@@ -47,5 +47,5 @@
         -e WORDPRESS_DB_USER=wordpress_user
         -e WORDPRESS_DB_PASSWORD=your_wordpress_user_password
         -v /var/www/html_data:/var/www/html
-        -p 80:80
+        -p 0.0.0.0:8000:80
         wordpress:latest
