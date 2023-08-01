@@ -41,13 +41,10 @@
         path: /opt/nginx_data
         state: directory
 
-    - name: Generate Nginx configuration
-      template:
+   - name: Copy Nginx configuration
+     copy:
         src: /root/nginx.conf
         dest: /opt/nginx_data/nginx.conf
-      vars:
-        server_name: localhost
-        wordpress_app_name: wordpress_app
 
     - name: Launch Nginx container
       command: >
