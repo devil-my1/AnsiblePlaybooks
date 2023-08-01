@@ -3,13 +3,6 @@
   hosts: all
   become: yes
   tasks:
-    - name: Ensure Docker and Docker Compose are installed
-      package:
-        name:
-          - docker.io
-          - docker-compose
-        state: present
-
     - name: Start and enable Docker service
       service:
         name: docker
