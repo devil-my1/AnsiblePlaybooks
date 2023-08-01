@@ -41,11 +41,6 @@
         path: /opt/nginx_data
         state: directory
 
-    - name: Copy Nginx configuration
-      copy:
-        src: /root/nginx.conf
-        dest: /opt/nginx_data/nginx.conf
-
     - name: Launch Nginx container
       command: >
         docker run
