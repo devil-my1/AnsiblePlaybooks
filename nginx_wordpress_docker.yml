@@ -41,10 +41,13 @@
         path: /opt/nginx_data
         state: directory
 
-    - name: Copy Nginx configuration
-      copy:
-        src: nginx.conf
+    - name: Generate Nginx configuration
+      template:
+        src: /home/ubuntu/nginx.conf
         dest: /opt/nginx_data/nginx.conf
+      vars:
+        server_name: your_domain.com
+        wordpress_app_name: wordpress_app
 
     - name: Launch Nginx container
       command: >
