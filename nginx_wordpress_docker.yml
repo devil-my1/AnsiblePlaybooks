@@ -47,7 +47,7 @@
         -d
         --name nginx_server
         --network nginx_wordpress_network
-        -p 80:80
+        -p 0.0.0.0:80:80
         -v /opt/nginx_data:/etc/nginx/conf.d
         nginx:latest
 
