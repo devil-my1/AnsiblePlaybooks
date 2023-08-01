@@ -1,13 +1,8 @@
 ---
-- name Deploy WordPress in Docker
+- name: Deploy WordPress in Docker
   hosts: all
   become: yes
   tasks:
-    - name: Ensure Docker and Docker Compose are installed
-      ansible.builtin.package:
-        name: ['docker.io', 'docker-compose']
-        state: present
-        
     - name: Pull WordPress and MySQL Docker images
       ansible.builtin.command: docker pull "{{ item }}"
       with_items:
@@ -34,8 +29,8 @@
         -e MYSQL_PASSWORD=your_wordpress_user_password
         -v /var/lib/mysql_data:/var/lib/mysql
         mysql:5.7
-      restart_policy: always
-
+      
+      
     - name: Create a directory for persistent WordPress data
       ansible.builtin.file:
         path: /var/www/html_data
@@ -52,6 +47,5 @@
         -e WORDPRESS_DB_USER=wordpress_user
         -e WORDPRESS_DB_PASSWORD=your_wordpress_user_password
         -v /var/www/html_data:/var/www/html
-        -p 80:80
+        -p 0.0.0.0:8000:80
         wordpress:latest
-      restart_policy: always
