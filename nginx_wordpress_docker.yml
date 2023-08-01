@@ -43,8 +43,8 @@
 
    - name: Copy Nginx configuration
      copy:
-        src: /root/nginx.conf
-        dest: /opt/nginx_data/nginx.conf
+       src: /root/nginx.conf
+       dest: /opt/nginx_data/nginx.conf
 
     - name: Launch Nginx container
       command: >
