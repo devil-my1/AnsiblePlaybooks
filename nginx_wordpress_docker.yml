@@ -43,7 +43,7 @@
 
     - name: Generate Nginx configuration
       template:
-        src: /home/www/nginx.conf
+        src: /root/nginx.conf
         dest: /opt/nginx_data/nginx.conf
       vars:
         server_name: localhost
