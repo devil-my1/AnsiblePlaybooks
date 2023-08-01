@@ -46,7 +46,7 @@
         src: /home/ubuntu/nginx.conf
         dest: /opt/nginx_data/nginx.conf
       vars:
-        server_name: your_domain.com
+        server_name: localhost
         wordpress_app_name: wordpress_app
 
     - name: Launch Nginx container
