@@ -1,0 +1,77 @@
+---
+- name: Deploy Nginx and WordPress in Docker
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Docker and Docker Compose are installed
+      package:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Check if Docker network exists
+      command: docker network inspect nginx_wordpress_network
+      register: network_check
+      ignore_errors: yes
+
+    - name: Create a Docker network
+      command: docker network create nginx_wordpress_network
+      when: network_check.rc != 0
+
+    - name: Create a directory for persistent WordPress data
+      file:
+        path: /opt/wordpress_data
+        state: directory
+
+    - name: Launch MySQL container
+      command: >
+        docker run
+        -d
+        --name mysql_db
+        --network nginx_wordpress_network
+        -e MYSQL_ROOT_PASSWORD=your_mysql_root_password
+        -e MYSQL_DATABASE=wordpress_db
+        -e MYSQL_USER=wordpress_user
+        -e MYSQL_PASSWORD=your_wordpress_user_password
+        -v /opt/wordpress_data/mysql:/var/lib/mysql
+        mysql:5.7
+
+    - name: Create a directory for persistent Nginx data
+      file:
+        path: /opt/nginx_data
+        state: directory
+
+    - name: Copy Nginx configuration
+      copy:
+        src: nginx.conf
+        dest: /opt/nginx_data/nginx.conf
+
+    - name: Launch Nginx container
+      command: >
+        docker run
+        -d
+        --name nginx_server
+        --network nginx_wordpress_network
+        -p 80:80
+        -v /opt/nginx_data:/etc/nginx/conf.d
+        nginx:latest
+
+    - name: Launch WordPress container
+      command: >
+        docker run
+        -d
+        --name wordpress_app
+        --network nginx_wordpress_network
+        -e WORDPRESS_DB_HOST=mysql_db
+        -e WORDPRESS_DB_NAME=wordpress_db
+        -e WORDPRESS_DB_USER=wordpress_user
+        -e WORDPRESS_DB_PASSWORD=your_wordpress_user_password
+        -v /opt/wordpress_data/html:/var/www/html
+        wordpress:latest
