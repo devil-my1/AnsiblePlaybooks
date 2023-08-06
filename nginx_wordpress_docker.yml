@@ -38,7 +38,7 @@
           - /opt/wordpress_data/mysql:/var/lib/mysql
         networks:
           - name: wordpress_network
-            alias: mysql_db
+ 
 
 
     - name: Create a directory for persistent Nginx data
@@ -72,4 +72,4 @@
           - /opt/wordpress_data/html:/var/www/html
         networks:
           - name: wordpress_network
-            alias: "{{ wordpress_app_name }}"
+        
