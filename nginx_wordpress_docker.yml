@@ -3,7 +3,12 @@
   hosts: all
   become: yes
   tasks:
-  
+
+    - name: Install pip3 on Ubuntu/Debian
+      apt:
+        name: python3-pip
+        state: present
+        
     - name: Install Docker Python library
       ansible.builtin.pip:
         name: docker
